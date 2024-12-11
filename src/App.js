@@ -1,6 +1,6 @@
 import React, { useState, useEffect ,useRef} from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { FaPaperPlane } from 'react-icons/fa';
+import { FaPaperPlane,FaUserCircle } from 'react-icons/fa';
 import { MdSend } from 'react-icons/md';
 // Style components using Tailwind CSS
 import "./App.css";
@@ -55,7 +55,16 @@ const App = () => {
       // setIsLoading(false);
     }
   };
-
+  const buttonTexts = [
+    { mainText: "Cancel Job", subText: "Need Acc#, Job# and Tech Id" },
+  { mainText: "Reassign Job", subText: "Need Acc#, Job#, Tech Id and New Tech Id" },
+  { mainText: "Schedule Job", subText: "Need Acc#, Job#, Tech Id, Reschudle Date#" }
+  ];
+  
+  // Function to handle the button click
+  const handleButtonClick = (text) => {
+      setUserInput(text);  // Set predefined text into the input
+  };
   // Function to clear the chat history
   const clearChat = () => {
     setChatHistory([]);
@@ -67,13 +76,35 @@ const App = () => {
   };
   
   return (
+    <>
+    <header className="w-full bg-[rgb(33,150,243)] text-white py-4 flex justify-between items-center px-4">
+        {/* <img src="/path/to/logo.png" alt="Logo" className="h-12" />
+      <h1 className="text-3xl font-bold text-center">GenAI</h1> */}
+  <div>
+    <span>SMART GenAI</span>
+    {/* <img src="src/smartlogo.png" alt="Logo" className="h-6 w-6" /> */}
+    </div>
+         <FaUserCircle className="h-6 w-6 " />
+      </header>
     <div className="container mx-auto px-4 py-8 flex flex-col h-screen">
-      <h1 className="text-3xl font-bold text-center mb-4">GenAI</h1>
-
-      <div className="chat-container rounded-lg shadow-md p-4 flex-grow overflow-auto">
+      <div className="flex-grow overflow-auto">
         <ChatHistory chatHistory={chatHistory} />
         {/* <Loading isLoading={isLoading} /> */}
       </div>
+      {chatHistory.length === 0 && (
+          <div className="button-container mt-4">
+            {buttonTexts.map((button, index) => (
+              <button
+                key={index}
+                className="button"
+                onClick={() => handleButtonClick(button.mainText)} // Set main text to input on click
+              >
+                <div className="main-text font-bold text-left">{button.mainText}</div>
+                <div className="sub-text text-left">{button.subText}</div>
+              </button>
+            ))}
+          </div>
+        )}
       <div className="mt-4">
         <div className="flex mt-4 relative">
           <input 
@@ -98,8 +129,14 @@ const App = () => {
         >
           Clear Chat
         </button>
-      </div>
+      </div>  
    </div>
+   <footer className="w-full text-center bg-[rgb(33,150,243)] text-white p-2">
+        <p>Gen AI | <a href="mailto:contact@example.com" className="underline text-white hover:text-gray-200">
+          Contact Us
+        </a> </p>
+    </footer>
+    </>
   );
 };
 
