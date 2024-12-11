@@ -17,16 +17,6 @@ const App = () => {
     "AIzaSyAJ_YKXP2LaKVDGssE4uX3HLPI0wDu28vk"
   );
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-  // const inputRef = useRef(null);
-  // const [inputWidth, setInputWidth] = useState(0);
-  
-  // Update input width on resize
-  // useEffect(() => {
-  //   if (inputRef.current) {
-  //     setInputWidth(inputRef.current.offsetWidth);
-  //   }
-  // }, [userInput]); // This will update on each change to userInput
-  // Function to handle user input
   const handleUserInput = (e) => {
     setUserInput(e.target.value);
     console.log(e.target.value);
@@ -39,14 +29,30 @@ const App = () => {
     // setIsLoading(true);
     try {
       // call Gemini Api to get a response
-      const result = await model.generateContent(userInput);
-      const response = await result.response;
-      console.log(response);
+      // const result = await model.generateContent(userInput);
+      // const response = await result.response;
+      // console.log(response);
       // add Gemeni's response to the chat history
+      //Custom API
+      const response = await fetch("http://10.81.78.212:8001/v1/user/search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query: userInput }),
+      });
+
+      const result = await response.json();
+      console.log(result);
+      // setChatHistory([
+      //   ...chatHistory,
+      //   { type: "user", message: userInput },
+      //   { type: "bot", message: response.text() },
+      // ]);
       setChatHistory([
         ...chatHistory,
         { type: "user", message: userInput },
-        { type: "bot", message: response.text() },
+        { type: "bot", message: result.response },
       ]);
     } catch {
       console.error("Error sending message");
