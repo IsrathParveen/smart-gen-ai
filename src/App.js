@@ -52,7 +52,7 @@ const App = () => {
       setChatHistory([
         ...chatHistory,
         { type: "user", message: userInput },
-        { type: "bot", message: result.response },
+        { type: "bot", message: result },
       ]);
     } catch {
       console.error("Error sending message");
