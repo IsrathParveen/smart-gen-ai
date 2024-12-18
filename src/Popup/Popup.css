@@ -1,0 +1,4 @@
+.custom-select-scroll {
+    max-height: 2px; 
+    overflow-y: auto;  /* Enable vertical scrolling */
+  }
