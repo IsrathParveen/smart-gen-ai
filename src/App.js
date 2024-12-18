@@ -161,7 +161,7 @@ const App = () => {
   rows={1} 
 /> */}
  <textarea
-          className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:border-blue-500 pr-10"
+          className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:border-blue-500 pr-10 resize-none"
           placeholder="Type your message..."
           value={userInput}
           onChange={handleUserInput}
