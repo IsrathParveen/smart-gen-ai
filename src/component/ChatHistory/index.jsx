@@ -11,6 +11,7 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick }) => {
           key={index}
           className={`flex items-start py-1 rounded-lg ${message.type === "user" ? "justify-end" : "justify-start"}`} // Adjust padding
         >
+          
           {message.type === "bot" && (
             <div className="flex items-center mr-2">
               {/* Icon for bot */}
@@ -19,7 +20,7 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick }) => {
           )}
           <div
             className={`py-1 px-2 rounded-lg ${message.type === "user" ? "bg-blue-100 text-blue-800 self-end" : "bg-gray-100 text-gray-800 self-start"}`} // Adjust padding
-          >
+            style={{ maxWidth: '75%', wordWrap: 'break-word', wordBreak: 'break-word' }}>
             {/* Render the message using ReactMarkdown to handle any markdown */}
             <div key={index}>
               {message.type === 'bot' ? (
@@ -31,6 +32,7 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick }) => {
                 <ReactMarkdown>{message.message}</ReactMarkdown>
               )}
             </div>
+            <div className="text-xs text-gray-500 mt-1">{message.timestamp}</div> {/* Display timestamp below the message */}
           </div>
         </div>
       ))}
