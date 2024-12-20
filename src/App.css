@@ -43,7 +43,7 @@
 }
 
 .button:hover {
-  background-color: rgb(33,150,243);
+  background-color: rgb(105, 180, 242);
   color:white;
   transform: scale(1.01); 
 }

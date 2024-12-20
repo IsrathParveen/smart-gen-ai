@@ -13,6 +13,8 @@ const App = () => {
   const [userInput, setUserInput] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [isBotTyping, setIsBotTyping] = useState(false);
+
  
   // const [isLoading, setIsLoading] = useState(false);
  
@@ -39,7 +41,13 @@ const App = () => {
     });
     if (userInput.trim() === "") 
       return;
+    setChatHistory([
+      ...chatHistory,
+      { type: "user", message: userInput, timestamp }
+    ]);
+  
     // setIsLoading(true);
+    setIsBotTyping(true);
     try {
       // call Gemini Api to get a response
       // const result = await model.generateContent(userInput);
@@ -56,16 +64,24 @@ const App = () => {
       const result = await response.text();
       console.log(result);
       // add Gemeni's response to the chat history
-      setChatHistory([
-        ...chatHistory,
-        { type: "user", message: userInput,timestamp},
-        { type: "bot", message: result,timestamp },
-        // { type: "bot", message: response.text() },
-      ]);
+      // Add the bot's response to the chat history
+    setChatHistory(prevChatHistory => [
+      ...prevChatHistory,
+      { type: "bot", message: result, timestamp },
+      // { type: "bot", message: response.text(),timestamp },
+    ]);
+
+      // setChatHistory([
+      //   ...chatHistory,
+      //   { type: "user", message: userInput,timestamp},
+      //   // { type: "bot", message: result,timestamp },
+      //   { type: "bot", message: response.text(),timestamp },
+      // ]);
     } catch {
       console.error("Error sending message");
     } finally {
       setUserInput("");
+      setIsBotTyping(false); 
       // setIsLoading(false);
     }
   };
@@ -131,7 +147,7 @@ const App = () => {
         <div className='m-5 p-3'>
           <ChatHistory
             chatHistory={chatHistory}
-            onHyperlinkClick={handleHyperlinkClick}
+            onHyperlinkClick={handleHyperlinkClick} isBotTyping={isBotTyping} 
           />
         </div>
           <Popup show={isPopupVisible} handleClose={handleClosePopup} />
