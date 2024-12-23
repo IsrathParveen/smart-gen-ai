@@ -47,6 +47,7 @@ const App = () => {
     ]);
   
     // setIsLoading(true);
+    setUserInput("");
     setIsBotTyping(true);
     try {
       // call Gemini Api to get a response
