@@ -7,14 +7,18 @@ import "./App.css";
 import ChatHistory from "./component/ChatHistory";
 import Popup from "./Popup"
 import Loading from "./component/Loading";
-
+import { RiMessengerLine } from "react-icons/ri";
+import Common from "./component/Common/common";
+ 
  
 const App = () => {
   const [userInput, setUserInput] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [isBotTyping, setIsBotTyping] = useState(false);
-
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  
+ 
  
   // const [isLoading, setIsLoading] = useState(false);
  
@@ -23,13 +27,20 @@ const App = () => {
     "AIzaSyAJ_YKXP2LaKVDGssE4uX3HLPI0wDu28vk"
   );
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-  
+ 
   // Function to handle user input
   const handleUserInput = (e) => {
     setUserInput(e.target.value);
     console.log(e.target.value);
   };
- 
+  const showCommonComponent = () => {
+    setIsModalVisible(true);
+  };
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+  };
+
+
   // Function to send user message to Gemini
   const sendMessage = async () => {
     const timestamp = new Date().toLocaleString('en-US', {
@@ -39,13 +50,13 @@ const App = () => {
       minute: 'numeric',
       hour12: true
     });
-    if (userInput.trim() === "") 
+    if (userInput.trim() === "")
       return;
     setChatHistory([
       ...chatHistory,
       { type: "user", message: userInput, timestamp }
     ]);
-  
+ 
     // setIsLoading(true);
     setUserInput("");
     setIsBotTyping(true);
@@ -65,7 +76,7 @@ const App = () => {
       const result = await response.text();
       console.log(result);
        // Check if the response contains the specific keys
-    // const isBorderResponse = result.account_number && result.department && 
+    // const isBorderResponse = result.account_number && result.department &&
     // result.phone && result.pid && result.email && result["Are these details correct? (yes/no)"];
     const isBorderResponse = result.toLowerCase().includes("please confirm the details below")
       console.log(isBorderResponse)
@@ -76,7 +87,7 @@ const App = () => {
           details = JSON.parse(jsonMatch[0]);
         }
       }
-
+ 
       // add Gemeni's response to the chat history
       // Add the bot's response to the chat history
     setChatHistory(prevChatHistory => [
@@ -84,7 +95,7 @@ const App = () => {
       { type: "bot", message: result, isBorder: isBorderResponse,details, timestamp },
       // { type: "bot", message: response.text(),timestamp },
     ]);
-
+ 
       // setChatHistory([
       //   ...chatHistory,
       //   { type: "user", message: userInput,timestamp},
@@ -95,7 +106,7 @@ const App = () => {
       console.error("Error sending message");
     } finally {
       setUserInput("");
-      setIsBotTyping(false); 
+      setIsBotTyping(false);
       // setIsLoading(false);
     }
   };
@@ -119,25 +130,25 @@ const App = () => {
   //   }
   // };
   const handleKeyDown = (e) => {
-
+ 
     if (e.key === 'Enter' && !e.shiftKey) {
-
+ 
       e.preventDefault();
-
+ 
       const { selectionStart, selectionEnd } = e.target;
-
+ 
       const newValue = userInput.slice(0, selectionStart) + '\n' + userInput.slice(selectionEnd);
-
+ 
       setUserInput(newValue);
-
+ 
       setTimeout(() => {
-
+ 
         e.target.selectionStart = e.target.selectionEnd = selectionStart + 1;
-
+ 
       }, 0);
-
+ 
     }
-
+ 
   };
   const handleHyperlinkClick = (event) => {
     event.preventDefault();
@@ -146,7 +157,7 @@ const App = () => {
   const handleClosePopup = () => {
     setIsPopupVisible(false);
   };
-  
+ 
   return (
     <>
     <div id='top-id' className='flex flex-col h-screen'>
@@ -161,10 +172,11 @@ const App = () => {
         <div className='m-5 p-3'>
           <ChatHistory
             chatHistory={chatHistory}
-            onHyperlinkClick={handleHyperlinkClick} isBotTyping={isBotTyping} 
+            onHyperlinkClick={handleHyperlinkClick} isBotTyping={isBotTyping}
           />
         </div>
           <Popup show={isPopupVisible} handleClose={handleClosePopup} />
+          <Common show={isModalVisible} handleClose={handleCloseModal} />
           {/* <Loading isLoading={isLoading} /> */}
       </div>
       <div className='mt-4 m-5 p-3'>
@@ -213,6 +225,18 @@ const App = () => {
                 <MdSend className='h-6 w-6' />
               </button>
             </div>
+            <div className='flex mt-4 relative'>
+            <RiMessengerLine className='h-6 w-6  text-blue-500'   />
+            {/* <button className="ml-0 px-2  text-blue bg-transparent focus:outline-none"
+             style={{ textDecoration: 'none', border: 'none',color: 'rgb(33,150,243)' }}>
+              New Question
+            </button> */}
+            <button
+                className="ml-0 px-2 text-blue bg-transparent focus:outline-none"
+                onClick={showCommonComponent}
+                style={{ textDecoration: 'none', border: 'none', color: 'rgb(33,150,243)' }}
+              >New Question</button>
+            </div>
             {/* <button
           className="mt-4 block px-4 py-2 rounded-lg bg-gray-400 text-white hover:bg-gray-500 focus:outline-none"
           onClick={clearChat}
@@ -221,7 +245,7 @@ const App = () => {
         </button> */}
           </div>
       </div>
-  
+ 
       <footer className='w-full text-center bg-[rgb(33,150,243)] text-white  flex justify-center items-center' >
         <p>
           Gen AI |{' '}
@@ -239,4 +263,5 @@ const App = () => {
 };
  
 export default App;
+ 
  
