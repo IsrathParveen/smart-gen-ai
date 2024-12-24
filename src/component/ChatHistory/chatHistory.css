@@ -2,7 +2,9 @@
     display: flex;
     align-items: center;
   }
-  
+  .custom-line-height {
+    line-height: 1.2; /* Adjust the value as needed */
+  }
   .dot {
     height: 8px;
     width: 8px;

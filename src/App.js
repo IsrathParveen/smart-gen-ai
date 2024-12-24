@@ -64,11 +64,24 @@ const App = () => {
  
       const result = await response.text();
       console.log(result);
+       // Check if the response contains the specific keys
+    // const isBorderResponse = result.account_number && result.department && 
+    // result.phone && result.pid && result.email && result["Are these details correct? (yes/no)"];
+    const isBorderResponse = result.toLowerCase().includes("please confirm the details below")
+      console.log(isBorderResponse)
+      let details = null;
+      if (isBorderResponse) {
+        const jsonMatch = result.match(/{[^}]*}/);
+        if (jsonMatch) {
+          details = JSON.parse(jsonMatch[0]);
+        }
+      }
+
       // add Gemeni's response to the chat history
       // Add the bot's response to the chat history
     setChatHistory(prevChatHistory => [
       ...prevChatHistory,
-      { type: "bot", message: result, timestamp },
+      { type: "bot", message: result, isBorder: isBorderResponse,details, timestamp },
       // { type: "bot", message: response.text(),timestamp },
     ]);
 
@@ -173,60 +186,32 @@ const App = () => {
           )}
           <div className='mt-4'>
             <div className='flex mt-4 relative'>
-            {/* <textarea
-    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 pr-10 hover:border-gray-100 hover:ring-gray-100 resize-none"
-    placeholder="Type your message..."
-    value={userInput}
-    onChange={handleUserInput}
-    onKeyDown={handleKeyDown}
-    onInput={(e) => {
-      e.target.style.height = 'auto';
-      const maxHeight = 5 * parseFloat(getComputedStyle(e.target).lineHeight); // Calculate max height for 5 rows
-      e.target.style.height = `${Math.min(e.target.scrollHeight, maxHeight)}px`;
-    }}
-    rows={1} 
-  /> */}
- <textarea
-  className="w-full  py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:border-blue-500 resize-none"
-  placeholder="Type your message..." value={userInput} onChange={handleUserInput} onKeyDown={handleKeyDown}
-  onInput={(e) => {
-    e.target.style.height = 'auto';
-    const maxHeight = 5 * parseFloat(getComputedStyle(e.target).lineHeight); // Calculate max height for 5 rows
-    if (e.target.value === '') {
-      e.target.style.height = 'auto'; // Reset height when content is removed
-    } else {
-      e.target.style.height = `${Math.min(e.target.scrollHeight, maxHeight)}px`;
-    }
-    if (e.target.scrollHeight > maxHeight) {
-      e.target.style.overflowY = 'auto'; // Enable vertical scrolling
-    } else {
-      e.target.style.overflowY = 'hidden'; // Disable vertical scrolling
-    }
-  }}
-  style={{ maxHeight: '5em', overflowY: 'auto', paddingRight: '3.5rem',paddingLeft:'1.0rem' }} // Set maximum height to 5 rows and enable vertical scrolling
-  rows={1} // Start with a single row
-/>
-              {/* <input
-                type='text'
-                className='w-full
-            px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 pr-10 hover:border-gray-100 hover:ring-gray-100'
-                placeholder='Type your message...'
-                value={userInput}
-                onChange={handleUserInput}
-                onKeyDown={handleKeyDown}
-              /> */}
-              {/* <button
-                className='absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-400 focus:outline-none'
-                onClick={sendMessage}
+              <textarea
+                className="w-full  py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:border-blue-500 resize-none"
+                placeholder="Type your message..." value={userInput} onChange={handleUserInput} onKeyDown={handleKeyDown}
+                onInput={(e) => {
+                  e.target.style.height = 'auto';
+                  const maxHeight = 5 * parseFloat(getComputedStyle(e.target).lineHeight); // Calculate max height for 5 rows
+                  if (e.target.value === '') {
+                    e.target.style.height = 'auto'; // Reset height when content is removed
+                  } else {
+                    e.target.style.height = `${Math.min(e.target.scrollHeight, maxHeight)}px`;
+                  }
+                  if (e.target.scrollHeight > maxHeight) {
+                    e.target.style.overflowY = 'auto'; // Enable vertical scrolling
+                  } else {
+                    e.target.style.overflowY = 'hidden'; // Disable vertical scrolling
+                  }
+                }}
+                style={{ maxHeight: '5em', overflowY: 'auto', paddingRight: '3.5rem',paddingLeft:'1.0rem' }} // Set maximum height to 5 rows and enable vertical scrolling
+                rows={1} // Start with a single row
+              />
+              <button
+                className={`absolute top-1/2 transform -translate-y-1/2 focus:outline-none ${userInput ? 'text-blue-500 hover:text-blue-600' : 'text-gray-400 hover:text-gray-400'}`}
+                onClick={sendMessage} style={{right: '1.5rem'}}
               >
                 <MdSend className='h-6 w-6' />
-              </button> */}
-              <button
-    className={`absolute top-1/2 transform -translate-y-1/2 focus:outline-none ${userInput ? 'text-blue-500 hover:text-blue-600' : 'text-gray-400 hover:text-gray-400'}`}
-    onClick={sendMessage} style={{right: '1.5rem'}}
-  >
-    <MdSend className='h-6 w-6' />
-  </button>
+              </button>
             </div>
             {/* <button
           className="mt-4 block px-4 py-2 rounded-lg bg-gray-400 text-white hover:bg-gray-500 focus:outline-none"

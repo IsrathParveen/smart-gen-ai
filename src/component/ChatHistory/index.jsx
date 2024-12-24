@@ -32,8 +32,18 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping }) => {
             style={{ maxWidth: '75%', wordWrap: 'break-word', wordBreak: 'break-word' }}
           >
             {/* Render the message using ReactMarkdown to handle any markdown */}
-            <div key={index}>
-              <ReactMarkdown>{message.message}</ReactMarkdown>
+            <div key={index} className="custom-line-height">
+            {message.type === "bot" && message.isBorder ? (
+                <div className="bg-white border border-black p-4 mb-4 mt-2">
+                   <p><strong>Please confirm the details below:</strong></p>
+                  {Object.entries(message.details).map(([key, value]) => (
+                    <p key={key}><strong>{key.replace(/_/g, ' ')}:</strong> {value}</p>
+                  ))}
+                </div>
+              ) : (
+                <ReactMarkdown>{message.message}</ReactMarkdown>
+              )}
+
             </div>
             <div className="text-xs text-gray-500 mt-1">{message.timestamp}</div> {/* Display timestamp below the message */}
           </div>
