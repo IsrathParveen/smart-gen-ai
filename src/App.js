@@ -9,6 +9,7 @@ import Popup from "./Popup"
 import Loading from "./component/Loading";
 import { RiMessengerLine } from "react-icons/ri";
 import Common from "./component/Common/common";
+import { BiMessageRoundedAdd } from "react-icons/bi";
  
  
 const App = () => {
@@ -157,7 +158,30 @@ const App = () => {
   const handleClosePopup = () => {
     setIsPopupVisible(false);
   };
- 
+  const handleResponse = async (response) => {
+    console.log(`Response received: ${response}`);
+    // Make API call with the response value
+    try {
+      const apiResponse = await fetch("http://10.81.78.212:8001/v1/user/search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query: response }),
+      });
+
+      const result = await apiResponse.text();
+      console.log(result);
+      // Handle the API response as needed
+      setChatHistory(prevChatHistory => [
+        ...prevChatHistory,
+        { type: "bot", message: result },
+        // { type: "bot", message: response.text(),timestamp },
+      ]);
+    } catch (error) {
+      console.error("Error sending response", error);
+    }
+  };
   return (
     <>
     <div id='top-id' className='flex flex-col h-screen'>
@@ -173,6 +197,7 @@ const App = () => {
           <ChatHistory
             chatHistory={chatHistory}
             onHyperlinkClick={handleHyperlinkClick} isBotTyping={isBotTyping}
+            onResponse={handleResponse}
           />
         </div>
           <Popup show={isPopupVisible} handleClose={handleClosePopup} />
@@ -198,6 +223,20 @@ const App = () => {
           )}
           <div className='mt-4'>
             <div className='flex mt-4 relative'>
+              <button
+              className="mr-2 bg-[rgb(33,150,243)] text-white hover:bg-blue-600 focus:outline-none flex items-center justify-center transition-all duration-300"
+              onClick={clearChat} style={{ textDecoration: 'none', border: 'none', borderRadius: '50%', width: '2.7rem', height: '2.7rem' }}
+              // onMouseEnter={(e) => {
+              //   e.currentTarget.style.width = '6rem'; // Change width to make it oval
+              //   e.currentTarget.style.borderRadius = '25px';
+              //   // Change border radius to make it oval
+              // }}
+              // onMouseLeave={(e) => {
+              //   e.currentTarget.style.width = '2.7rem'; // Revert width to original
+              //   e.currentTarget.style.borderRadius = '50%'; // Revert border radius to original
+              // }}
+            ><BiMessageRoundedAdd className="h-6 w-6" />
+            </button>
               <textarea
                 className="w-full  py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-1 focus:border-blue-500 resize-none"
                 placeholder="Type your message..." value={userInput} onChange={handleUserInput} onKeyDown={handleKeyDown}

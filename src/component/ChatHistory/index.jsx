@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { FaRobot } from "react-icons/fa";
 import "./chatHistory.css"; // Import the CSS file for animations
 
-const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping }) => {
+const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping,onResponse }) => {
   const chatEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -13,6 +13,11 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping }) => {
   useEffect(() => {
     scrollToBottom();
   }, [chatHistory, isBotTyping]);
+
+  const handleButtonClick = (value) => {
+    alert(`Button clicked with value: ${value}`);
+  };
+
 
   return (
     <div className="space-y-2"> {/* Reduce the vertical spacing */}
@@ -36,12 +41,33 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping }) => {
             {message.type === "bot" && message.isBorder ? (
                 <div className="bg-white border border-black p-4 mb-4 mt-2">
                    <p><strong>Please confirm the details below:</strong></p>
-                  {Object.entries(message.details).map(([key, value]) => (
+                  {/* {Object.entries(message.details).map(([key, value]) => (
                     <p key={key}><strong>{key.replace(/_/g, ' ')}:</strong> {value}</p>
+                  ))} */}
+                  {Object.entries(message.details).map(([key, value]) => (
+                    <p key={key}>
+                      <strong>{key.replace(/_/g, ' ')}:</strong> {key === 'Are these details correct? (yes/no)' ? (
+                        <span>
+                          <button
+                            className="ml-2 px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none"
+                            onClick={() => onResponse('Yes')}
+                          >
+                            Yes
+                          </button>
+                          <button
+                            className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none"
+                            onClick={() => onResponse('No')}
+                          >
+                            No
+                          </button>
+                        </span>
+                      ) : value}
+                    </p>
                   ))}
                 </div>
               ) : (
                 <ReactMarkdown>{message.message}</ReactMarkdown>
+
               )}
 
             </div>
