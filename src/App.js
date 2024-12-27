@@ -74,28 +74,46 @@ const App = () => {
         body: JSON.stringify({ query: userInput }),
       });
  
-      const result = await response.text();
+      // const result = await response.text();
+      // console.log(result);
+      const result = await response.json();
       console.log(result);
+
+      // const isBorderResponse = result.toLowerCase().includes("please")
+      // console.log(isBorderResponse)
+      // let details = null;
+      // if (isBorderResponse) {
+      //   const jsonMatch = result.match(/{[^}]*}/);
+      //   if (jsonMatch) {
+      //     details = JSON.parse(jsonMatch[0]);
+      //   }
+      // }
+      // const combinedMessage = `${result.message}\n\n${result.query_message}`;
+      
+      const botMessages = [
+        { type: "bot", message: {Message:result.message,Query:result.query,QueryMessage:
+          result.query_message
+        }, timestamp },
+        // { type: "bot", message: result.query_message,timestamp }
+      ];
+
+      setChatHistory(prevChatHistory => [
+        ...prevChatHistory,
+        ...botMessages
+      ]);
+
        // Check if the response contains the specific keys
     // const isBorderResponse = result.account_number && result.department &&
     // result.phone && result.pid && result.email && result["Are these details correct? (yes/no)"];
-    const isBorderResponse = result.toLowerCase().includes("please confirm the details below")
-      console.log(isBorderResponse)
-      let details = null;
-      if (isBorderResponse) {
-        const jsonMatch = result.match(/{[^}]*}/);
-        if (jsonMatch) {
-          details = JSON.parse(jsonMatch[0]);
-        }
-      }
- 
+    
       // add Gemeni's response to the chat history
       // Add the bot's response to the chat history
-    setChatHistory(prevChatHistory => [
-      ...prevChatHistory,
-      { type: "bot", message: result, isBorder: isBorderResponse,details, timestamp },
-      // { type: "bot", message: response.text(),timestamp },
-    ]);
+      
+    // setChatHistory(prevChatHistory => [
+    //   ...prevChatHistory,
+    //   { type: "bot", message: result, isBorder: isBorderResponse,details, timestamp },
+    //   { type: "bot", message: response.text(),timestamp },
+    // ]);
  
       // setChatHistory([
       //   ...chatHistory,

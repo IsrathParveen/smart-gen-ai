@@ -1,9 +1,24 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef,useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { FaRobot } from "react-icons/fa";
 import "./chatHistory.css"; // Import the CSS file for animations
+import Popup from '../../Popup'; // Import your Popup component
+const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping, onResponse }) => {
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [query, setQuery] = useState([]);
 
-const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping,onResponse }) => {
+  const handleButtonClick = (query) => {
+    // onResponse(query);
+    console.log(query)
+    setQuery(query);
+    setIsPopupOpen(true);
+  }; 
+
+  const handleClose = () => {
+    setIsPopupOpen(false);
+    setQuery([]);
+  };
+  console.log(chatHistory)
   const chatEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -13,11 +28,6 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping,onResponse }) 
   useEffect(() => {
     scrollToBottom();
   }, [chatHistory, isBotTyping]);
-
-  const handleButtonClick = (value) => {
-    alert(`Button clicked with value: ${value}`);
-  };
-
 
   return (
     <div className="space-y-2"> {/* Reduce the vertical spacing */}
@@ -38,38 +48,21 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping,onResponse }) 
           >
             {/* Render the message using ReactMarkdown to handle any markdown */}
             <div key={index} className="custom-line-height">
-            {message.type === "bot" && message.isBorder ? (
-                <div className="bg-white border border-black p-4 mb-4 mt-2">
-                   <p><strong>Please confirm the details below:</strong></p>
-                  {/* {Object.entries(message.details).map(([key, value]) => (
-                    <p key={key}><strong>{key.replace(/_/g, ' ')}:</strong> {value}</p>
-                  ))} */}
-                  {Object.entries(message.details).map(([key, value]) => (
-                    <p key={key}>
-                      <strong>{key.replace(/_/g, ' ')}:</strong> {key === 'Are these details correct? (yes/no)' ? (
-                        <span>
-                          <button
-                            className="ml-2 px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none"
-                            onClick={() => onResponse('Yes')}
-                          >
-                            Yes
-                          </button>
-                          <button
-                            className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none"
-                            onClick={() => onResponse('No')}
-                          >
-                            No
-                          </button>
-                        </span>
-                      ) : value}
-                    </p>
-                  ))}
+              {message.type === "bot" && message.message.Message ? (
+                <div className="bg-gray-200 p-4 mb-4 mt-2">
+                  <p><strong>{message.message.Message}</strong></p>
+                  {message.message.QueryMessage && (
+                    <button
+                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+                    onClick={() => handleButtonClick(message.message.Query)}
+                  >
+                    {message.message.QueryMessage}
+                  </button>
+                  )}
                 </div>
               ) : (
                 <ReactMarkdown>{message.message}</ReactMarkdown>
-
               )}
-
             </div>
             <div className="text-xs text-gray-500 mt-1">{message.timestamp}</div> {/* Display timestamp below the message */}
           </div>
@@ -90,6 +83,7 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping,onResponse }) 
         </div>
       )}
       <div ref={chatEndRef} />
+      <Popup show={isPopupOpen} handleClose={handleClose} query={query} />
     </div>
   );
 };

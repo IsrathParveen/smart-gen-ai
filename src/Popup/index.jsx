@@ -5,7 +5,8 @@ import Modal from 'react-bootstrap/Modal';
 import Dropdown from 'react-bootstrap/Dropdown';
 
 
-function Popup({show,handleClose}) {
+function Popup({show, handleClose, query}) {
+  
   return (
     <>
       <Modal show={show} onHide={handleClose}>
@@ -13,15 +14,20 @@ function Popup({show,handleClose}) {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group className="mb-3" >
-              <Form.Label className="fw-semibold">Region</Form.Label>
-              <Form.Control as="select" className='custom-select-scroll'>
-                <option>Carolinas</option>
-                <option>Florida</option>
-                <option>West</option>
-                <option>East</option>
-              </Form.Control>
-            </Form.Group>
+          {query && query.map((item, index) => (
+              <Form.Group className="mb-3" key={index}>
+                <Form.Label className="fw-semibold">{item.entity}</Form.Label>
+                {item.type === 'select' ? (
+                  <Form.Control as="select" className='custom-select-scroll'>
+                    {item.options && item.options.map((option, idx) => (
+                      <option key={idx} value={option}>{option}</option>
+                    ))}
+                  </Form.Control>
+                ) : (
+                  <Form.Control type="text" value={item.value || ''}  />
+                )}
+              </Form.Group>
+            ))}
           </Form>
         </Modal.Body>
         <Modal.Footer className="d-flex justify-content-center">
