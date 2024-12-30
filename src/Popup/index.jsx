@@ -7,10 +7,8 @@ function Popup({ show, handleClose, query, onSubmit }) {
   const [formData, setFormData] = useState({});
 
   const handleChange = (entity, value) => {
-    setFormData(prevState => ({
-      ...prevState,
-      [entity]: value
-    }));
+    const formattedString = `${entity}:${value}`;
+    setFormData(formattedString);
     // const formattedString = `${entity}+${value}`;
     // console.log(formattedString);
     // setFormData(
@@ -42,7 +40,7 @@ function Popup({ show, handleClose, query, onSubmit }) {
                     onChange={(e) => handleChange(item.entity, e.target.value)}
                   >
                     {item.options && item.options.map((option, idx) => (
-                      <option key={idx} >{option}</option>
+                      <option key={idx} value={item.value} >{option}</option>
                     ))}
                   </Form.Control>
                 ) : (

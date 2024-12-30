@@ -52,23 +52,17 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping, onResponse,se
             {/* Render the message using ReactMarkdown to handle any markdown */}
             <div key={index} className="custom-line-height">
               {message.type === "bot" && message.message.Message ? (
-                <div className="p-4 mb-4 mt-2">
-                  <p><strong>{message.message.Message}</strong></p>
-                  {message.message.QueryMessage && message.message.Message.includes("Are these details correct?") ? (
-                  <div>
-                    {/* <button
-                      className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none"
-                      onClick={() => handleButtonClick({ query: "yes" })}
-                    >
-                      Yes
-                    </button>
-                    <button
-                      className="mt-2 ml-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none"
-                      onClick={() => handleButtonClick({query: "no" })}
-                    >
-                      No
-                    </button> */}
-                    <button
+                <div className="p-4 mb-4 mt-2" style={{ border: message.message.Message.includes('\n') ? '1px solid black' : 'none' }}>
+                   {message.message.Message.includes('\n') ? (
+                    message.message.Message.split('\n').map((line, i) => (
+                      <p key={i}><strong>{line}</strong></p>
+                    ))
+                  ) : (
+                    <p><strong>{message.message.Message}</strong></p>
+                  )}
+                  {message.message.QueryMessage.length===0 && message.message.Message.includes("Are these details correct?")?(
+                      <div>
+                        <button
                             className="ml-2 px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none"
                             onClick={() => onResponse('Yes')}
                           >
@@ -80,15 +74,16 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping, onResponse,se
                           >
                             No
                           </button>
-                  </div>
-                ) :(
-                    <button
-                    className="mt-2 px-4 py-2 w-full bg-white text-blue-500 rounded hover:bg-gray-600 focus:outline-none border border-blue-500"
-                    onClick={() => handleButtonClick(message.message.Query)}
-                  >
-                    {message.message.QueryMessage}
-                  </button>
-                  )}
+                        </div>
+                    ):(message.message.QueryMessage.length===0 && message.message.Message?(
+                      <ReactMarkdown>{message.message.message}</ReactMarkdown>
+                    ):( <button
+                      className="mt-2 px-4 py-2 w-full bg-white text-blue-500 rounded hover:bg-gray-600 focus:outline-none border border-blue-500"
+                      onClick={() => handleButtonClick(message.message.Query)}
+                    >
+                      {message.message.QueryMessage}
+                    </button>)
+                  )}     
                 </div>
               ) : (
                 <ReactMarkdown>{message.message}</ReactMarkdown>
