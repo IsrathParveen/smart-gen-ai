@@ -1,12 +1,30 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
-import Dropdown from 'react-bootstrap/Dropdown';
 
+function Popup({ show, handleClose, query, onSubmit }) {
+  const [formData, setFormData] = useState({});
 
-function Popup({show, handleClose, query}) {
-  
+  const handleChange = (entity, value) => {
+    setFormData(prevState => ({
+      ...prevState,
+      [entity]: value
+    }));
+    // const formattedString = `${entity}+${value}`;
+    // console.log(formattedString);
+    // setFormData(
+    //   // const updatedFormData = prevState.filter(item => !item.startsWith(`${entity}:`));
+    //   formattedString
+    // );
+  };
+
+  const handleSubmit = () => {
+    console.log(formData);
+    onSubmit(formData);
+    handleClose();
+  };
+
   return (
     <>
       <Modal show={show} onHide={handleClose}>
@@ -14,28 +32,33 @@ function Popup({show, handleClose, query}) {
         </Modal.Header>
         <Modal.Body>
           <Form>
-          {query && query.map((item, index) => (
+            {query && query.map((item, index) => (
               <Form.Group className="mb-3" key={index}>
                 <Form.Label className="fw-semibold">{item.entity}</Form.Label>
-                {item.type === 'select' ? (
-                  <Form.Control as="select" className='custom-select-scroll'>
+                {true ? (
+                  <Form.Control
+                    as="select"
+                    className='custom-select-scroll'
+                    onChange={(e) => handleChange(item.entity, e.target.value)}
+                  >
                     {item.options && item.options.map((option, idx) => (
-                      <option key={idx} value={option}>{option}</option>
+                      <option key={idx} >{option}</option>
                     ))}
                   </Form.Control>
                 ) : (
-                  <Form.Control type="text" value={item.value || ''}  />
+                  <Form.Control
+                    type="text"
+                    value={formData[item.entity] || ''}
+                    onChange={(e) => handleChange(item.entity, e.target.value)}
+                  />
                 )}
               </Form.Group>
             ))}
           </Form>
         </Modal.Body>
         <Modal.Footer className="d-flex justify-content-center">
-          {/* <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button> */}
-          <Button variant="primary" onClick={handleClose}>
-          Submit
+          <Button type="button" variant="primary" onClick={handleSubmit}>
+            Submit
           </Button>
         </Modal.Footer>
       </Modal>

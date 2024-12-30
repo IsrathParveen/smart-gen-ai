@@ -18,7 +18,7 @@ const App = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  
+  const [showTextarea, setShowTextarea] = useState(true);
  
  
   // const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +43,8 @@ const App = () => {
 
 
   // Function to send user message to Gemini
-  const sendMessage = async () => {
+  const sendMessage = async (formData = null) => {
+    console.log(formData,"in app.js")
     const timestamp = new Date().toLocaleString('en-US', {
       month: 'long',
       day: 'numeric',
@@ -51,12 +52,14 @@ const App = () => {
       minute: 'numeric',
       hour12: true
     });
-    if (userInput.trim() === "")
-      return;
+    // if (userInput.trim() === "")
+    //   return;
+    if(userInput!==""){
     setChatHistory([
       ...chatHistory,
       { type: "user", message: userInput, timestamp }
     ]);
+  }
  
     // setIsLoading(true);
     setUserInput("");
@@ -71,7 +74,10 @@ const App = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query: userInput }),
+        body: JSON.stringify({ query: formData ? formData : userInput  }),
+        // body: JSON.stringify(formData ? formData : { query: userInput }),
+        // console.log(formData ? formData : JSON.stringify({ query: userInput }))
+        //  body:  JSON.stringify({ query: userInput })
       });
  
       // const result = await response.text();
@@ -101,7 +107,7 @@ const App = () => {
         ...prevChatHistory,
         ...botMessages
       ]);
-
+      setShowTextarea(!result.query_message);
        // Check if the response contains the specific keys
     // const isBorderResponse = result.account_number && result.department &&
     // result.phone && result.pid && result.email && result["Are these details correct? (yes/no)"];
@@ -121,8 +127,8 @@ const App = () => {
       //   // { type: "bot", message: result,timestamp },
       //   { type: "bot", message: response.text(),timestamp },
       // ]);
-    } catch {
-      console.error("Error sending message");
+    } catch(err) {
+      console.error("Error sending message",err);
     } finally {
       setUserInput("");
       setIsBotTyping(false);
@@ -176,30 +182,35 @@ const App = () => {
   const handleClosePopup = () => {
     setIsPopupVisible(false);
   };
-  const handleResponse = async (response) => {
-    console.log(`Response received: ${response}`);
-    // Make API call with the response value
-    try {
-      const apiResponse = await fetch("http://10.81.78.212:8001/v1/user/search", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query: response }),
-      });
-
-      const result = await apiResponse.text();
-      console.log(result);
-      // Handle the API response as needed
-      setChatHistory(prevChatHistory => [
-        ...prevChatHistory,
-        { type: "bot", message: result },
-        // { type: "bot", message: response.text(),timestamp },
-      ]);
-    } catch (error) {
-      console.error("Error sending response", error);
-    }
+  const handleNewQuestionClick = () => {
+    setShowTextarea(true);
+    setIsModalVisible(false)
   };
+
+  // const handleResponse = async (response) => {
+  //   console.log(`Response received: ${response}`);
+  //   // Make API call with the response value
+  //   try {
+  //     const apiResponse = await fetch("http://10.81.78.212:8001/v1/user/search", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ query: response }),
+  //     });
+
+  //     const result = await apiResponse.text();
+  //     console.log(result);
+  //     // Handle the API response as needed
+  //     setChatHistory(prevChatHistory => [
+  //       ...prevChatHistory,
+  //       { type: "bot", message: result },
+  //       // { type: "bot", message: response.text(),timestamp },
+  //     ]);
+  //   } catch (error) {
+  //     console.error("Error sending response", error);
+  //   }
+  // };
   return (
     <>
     <div id='top-id' className='flex flex-col h-screen'>
@@ -214,12 +225,12 @@ const App = () => {
         <div className='m-5 p-3'>
           <ChatHistory
             chatHistory={chatHistory}
-            onHyperlinkClick={handleHyperlinkClick} isBotTyping={isBotTyping}
-            onResponse={handleResponse}
+            onHyperlinkClick={handleHyperlinkClick} isBotTyping={isBotTyping} sendMessage={sendMessage}
+             onResponse={sendMessage} 
           />
         </div>
-          <Popup show={isPopupVisible} handleClose={handleClosePopup} />
-          <Common show={isModalVisible} handleClose={handleCloseModal} />
+          {/* <Popup show={isPopupVisible} handleClose={handleClosePopup}  handleSubmit={sendMessage}/> */}
+          <Common show={isModalVisible} handleClose={handleCloseModal}  onNewQuestionClick={handleNewQuestionClick} />
           {/* <Loading isLoading={isLoading} /> */}
       </div>
       <div className='mt-4 m-5 p-3'>
@@ -239,7 +250,8 @@ const App = () => {
               ))}
             </div>
           )}
-          <div className='mt-4'>
+          <div className='mt-4'> 
+          {showTextarea ? (
             <div className='flex mt-4 relative'>
               <button
               className="mr-2 bg-[rgb(33,150,243)] text-white hover:bg-blue-600 focus:outline-none flex items-center justify-center transition-all duration-300"
@@ -277,23 +289,23 @@ const App = () => {
               />
               <button
                 className={`absolute top-1/2 transform -translate-y-1/2 focus:outline-none ${userInput ? 'text-blue-500 hover:text-blue-600' : 'text-gray-400 hover:text-gray-400'}`}
-                onClick={sendMessage} style={{right: '1.5rem'}}
+                onClick={()=>{let formdata=userInput; sendMessage(formdata)}} style={{right: '1.5rem'}}
               >
                 <MdSend className='h-6 w-6' />
               </button>
             </div>
+          ):(
+          
             <div className='flex mt-4 relative'>
             <RiMessengerLine className='h-6 w-6  text-blue-500'   />
-            {/* <button className="ml-0 px-2  text-blue bg-transparent focus:outline-none"
-             style={{ textDecoration: 'none', border: 'none',color: 'rgb(33,150,243)' }}>
-              New Question
-            </button> */}
             <button
                 className="ml-0 px-2 text-blue bg-transparent focus:outline-none"
                 onClick={showCommonComponent}
                 style={{ textDecoration: 'none', border: 'none', color: 'rgb(33,150,243)' }}
               >New Question</button>
             </div>
+          )}
+         
             {/* <button
           className="mt-4 block px-4 py-2 rounded-lg bg-gray-400 text-white hover:bg-gray-500 focus:outline-none"
           onClick={clearChat}

@@ -3,32 +3,35 @@ import ReactMarkdown from "react-markdown";
 import { FaRobot } from "react-icons/fa";
 import "./chatHistory.css"; // Import the CSS file for animations
 import Popup from '../../Popup'; // Import your Popup component
-const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping, onResponse }) => {
+const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping, onResponse,sendMessage }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [query, setQuery] = useState([]);
-
-  const handleButtonClick = (query) => {
-    // onResponse(query);
-    console.log(query)
-    setQuery(query);
-    setIsPopupOpen(true);
-  }; 
-
+   const [query, setQuery] = useState([]);
+ 
   const handleClose = () => {
     setIsPopupOpen(false);
-    setQuery([]);
+  };
+ 
+  const handleButtonClick = (query) => {
+   
+       console.log(query)
+       setQuery(query);
+       setIsPopupOpen(true);
+     };
+  const handleSubmit = (formData) => {
+    console.log(formData,"popup string in chat component")
+    sendMessage(formData);
   };
   console.log(chatHistory)
   const chatEndRef = useRef(null);
-
+ 
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
+ 
   useEffect(() => {
     scrollToBottom();
   }, [chatHistory, isBotTyping]);
-
+ 
   return (
     <div className="space-y-2"> {/* Reduce the vertical spacing */}
       {chatHistory.map((message, index) => (
@@ -49,11 +52,38 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping, onResponse })
             {/* Render the message using ReactMarkdown to handle any markdown */}
             <div key={index} className="custom-line-height">
               {message.type === "bot" && message.message.Message ? (
-                <div className="bg-gray-200 p-4 mb-4 mt-2">
+                <div className="p-4 mb-4 mt-2">
                   <p><strong>{message.message.Message}</strong></p>
-                  {message.message.QueryMessage && (
+                  {message.message.QueryMessage && message.message.Message.includes("Are these details correct?") ? (
+                  <div>
+                    {/* <button
+                      className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none"
+                      onClick={() => handleButtonClick({ query: "yes" })}
+                    >
+                      Yes
+                    </button>
                     <button
-                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+                      className="mt-2 ml-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none"
+                      onClick={() => handleButtonClick({query: "no" })}
+                    >
+                      No
+                    </button> */}
+                    <button
+                            className="ml-2 px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none"
+                            onClick={() => onResponse('Yes')}
+                          >
+                            Yes
+                          </button>
+                          <button
+                            className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none"
+                            onClick={() => onResponse('No')}
+                          >
+                            No
+                          </button>
+                  </div>
+                ) :(
+                    <button
+                    className="mt-2 px-4 py-2 w-full bg-white text-blue-500 rounded hover:bg-gray-600 focus:outline-none border border-blue-500"
                     onClick={() => handleButtonClick(message.message.Query)}
                   >
                     {message.message.QueryMessage}
@@ -83,9 +113,10 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping, onResponse })
         </div>
       )}
       <div ref={chatEndRef} />
-      <Popup show={isPopupOpen} handleClose={handleClose} query={query} />
+      <Popup show={isPopupOpen} handleClose={handleClose} query={query} onSubmit={handleSubmit}/>
     </div>
   );
 };
-
+ 
 export default ChatHistory;
+ 
