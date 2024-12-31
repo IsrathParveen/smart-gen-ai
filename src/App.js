@@ -19,8 +19,14 @@ const App = () => {
   const [isBotTyping, setIsBotTyping] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [showTextarea, setShowTextarea] = useState(true);
+  const [showButtonContainer, setShowButtonContainer] = useState(false);
+  // const [showNewQuestionButton, setShowNewQuestionButton] = useState(true);
  
- 
+  const buttonContainerTexts = [
+    { mainText: 'Great,Thanks!' },
+    { mainText: 'Okay' },
+    { mainText: 'Ok,Thank You!' },
+  ];
   // const [isLoading, setIsLoading] = useState(false);
  
   // inislize your Gemeni Api
@@ -102,11 +108,23 @@ const App = () => {
         }, timestamp },
         // { type: "bot", message: result.query_message,timestamp }
       ];
-
+      if (result.message.includes("Account number validated successfully")) {
+        setShowButtonContainer(true);
+      } else {
+        setShowButtonContainer(false);
+      }
+      // if (result.message.includes("Job has been created successfully")) {
+      //   setShowTextarea(true);
+      //   setShowNewQuestionButton(false);
+      //   console.log(showTextarea,showNewQuestionButton,"line 119 in app.js")
+      // } else {
+      //   setShowNewQuestionButton(true);
+      // }
       setChatHistory(prevChatHistory => [
         ...prevChatHistory,
         ...botMessages
       ]);
+     
       setShowTextarea(!result.query_message);
        // Check if the response contains the specific keys
     // const isBorderResponse = result.account_number && result.department &&
@@ -186,6 +204,10 @@ const App = () => {
     setShowTextarea(true);
     setIsModalVisible(false)
   };
+  const handleButtonContainer = (mainText) => {
+    sendMessage(mainText);
+    setShowButtonContainer(false);
+  };
 
   // const handleResponse = async (response) => {
   //   console.log(`Response received: ${response}`);
@@ -234,6 +256,22 @@ const App = () => {
           {/* <Loading isLoading={isLoading} /> */}
       </div>
       <div className='mt-4 m-5 p-3'>
+          {showButtonContainer && (
+            <div className='button-container'>
+              {buttonContainerTexts.map((button, index) => (
+                <button
+                  key={index}
+                  className='button'
+                  onClick={() => handleButtonContainer(button.mainText)} // Set main text to input on click
+                >
+                  <div className='main-text font-bold text-left'>
+                    {button.mainText}
+                  </div>
+                  {/* <div className='sub-text text-left'>{button.subText}</div> */}
+                </button>
+              ))}
+            </div>
+          )}
           {chatHistory.length === 0 && (
             <div className='button-container'>
               {buttonTexts.map((button, index) => (
@@ -295,7 +333,7 @@ const App = () => {
               </button>
             </div>
           ):(
-          
+            // showNewQuestionButton && (
             <div className='flex mt-4 relative'>
             <RiMessengerLine className='h-6 w-6  text-blue-500'   />
             <button
@@ -304,6 +342,7 @@ const App = () => {
                 style={{ textDecoration: 'none', border: 'none', color: 'rgb(33,150,243)' }}
               >New Question</button>
             </div>
+            // )
           )}
          
             {/* <button

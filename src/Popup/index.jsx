@@ -7,6 +7,7 @@ function Popup({ show, handleClose, query, onSubmit }) {
   const [formData, setFormData] = useState({});
 
   const handleChange = (entity, value) => {
+    console.log(entity, value,"line no10 in popup");
     const formattedString = `${entity}:${value}`;
     setFormData(formattedString);
     // const formattedString = `${entity}+${value}`;
@@ -35,20 +36,20 @@ function Popup({ show, handleClose, query, onSubmit }) {
                 <Form.Label className="fw-semibold">{item.entity}</Form.Label>
                 {true ? (
                   <Form.Control
-                    as="select"
-                    className='custom-select-scroll'
-                    onChange={(e) => handleChange(item.entity, e.target.value)}
-                  >
-                    {item.options && item.options.map((option, idx) => (
-                      <option key={idx} value={item.value} >{option}</option>
-                    ))}
-                  </Form.Control>
-                ) : (
-                  <Form.Control
-                    type="text"
-                    value={formData[item.entity] || ''}
-                    onChange={(e) => handleChange(item.entity, e.target.value)}
-                  />
+                  as="select"
+                  className='custom-select-scroll'
+                  onChange={(e) => {console.log(e,"line 41 in popup");handleChange(item.entity, e.target.value)}}
+                >
+                  {item.options && item.options.map((option, idx) => (
+                    <option key={idx} value={item.value} >{option}</option>
+                  ))}
+                </Form.Control>
+              ) : (
+                <Form.Control
+                  type="text"
+                  value={formData[item.entity] || ''}
+                  onChange={(e) => handleChange(item.entity, e.target.value)}
+                />
                 )}
               </Form.Group>
             ))}
