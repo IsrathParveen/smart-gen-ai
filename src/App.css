@@ -73,3 +73,7 @@
   border-color:rgb(0, 115, 209);
 color: rgb(0, 115, 209);
 }
+.right-aligned {
+  display: flex;
+  justify-content: flex-end;
+}

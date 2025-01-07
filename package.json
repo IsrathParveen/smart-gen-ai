@@ -15,6 +15,7 @@
     "react-markdown": "^9.0.1",
     "react-popup": "^0.11.2",
     "react-scripts": "5.0.1",
+    "react-select": "^5.9.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

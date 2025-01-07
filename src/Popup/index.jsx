@@ -1,26 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import Select from 'react-select';
+
 
 function Popup({ show, handleClose, query, onSubmit }) {
   const [formData, setFormData] = useState({});
 
-  const handleChange = (entity, value) => {
-    console.log(entity, value,"line no10 in popup");
-    const formattedString = `${entity}:${value}`;
-    setFormData(formattedString);
-    // const formattedString = `${entity}+${value}`;
-    // console.log(formattedString);
-    // setFormData(
-    //   // const updatedFormData = prevState.filter(item => !item.startsWith(`${entity}:`));
-    //   formattedString
-    // );
+  useEffect(() => {
+    // Initialize formData with query values
+    const initialFormData = {};
+    query.forEach(item => {
+      initialFormData[item.entity] = item.value || '';
+    });
+    setFormData(initialFormData);
+  }, [query]);
+
+  const handleChange = (entity, selectedOption) => {
+    setFormData(prevState => ({
+      ...prevState,
+      [entity]: selectedOption.value
+    }));
+  };
+  const handleTextChange = (entity, value) => {
+    setFormData(prevState => ({
+      ...prevState,
+      [entity]: value
+    }));
   };
 
+
   const handleSubmit = () => {
-    console.log(formData);
-    onSubmit(formData);
+    // Format formData into a single string
+    const formattedString = Object.entries(formData)
+      .map(([key, value]) => `${key}:${value}`)
+      .join(', ');
+    onSubmit( formattedString );
     handleClose();
   };
 
@@ -34,22 +50,30 @@ function Popup({ show, handleClose, query, onSubmit }) {
             {query && query.map((item, index) => (
               <Form.Group className="mb-3" key={index}>
                 <Form.Label className="fw-semibold">{item.entity}</Form.Label>
-                {true ? (
-                  <Form.Control
-                  as="select"
+                {item.type === 'select' ? (
+                  // <Form.Control
+                  //   as="select"
+                  //   className='custom-select-scroll'
+                  //   value={formData[item.entity] || ''}
+                  //   onChange={(e) => handleChange(item.entity, e.target.value)}
+                  // >
+                  //   {item.options && item.options.map((option, idx) => (
+                  //     <option key={idx} value={option}>{option}</option>
+                  //   ))}
+                  // </Form.Control>
+                  <Select
                   className='custom-select-scroll'
-                  onChange={(e) => {console.log(e,"line 41 in popup");handleChange(item.entity, e.target.value)}}
-                >
-                  {item.options && item.options.map((option, idx) => (
-                    <option key={idx} value={item.value} >{option}</option>
-                  ))}
-                </Form.Control>
-              ) : (
-                <Form.Control
-                  type="text"
-                  value={formData[item.entity] || ''}
-                  onChange={(e) => handleChange(item.entity, e.target.value)}
+                  value={{ value: formData[item.entity], label: formData[item.entity] }}
+                  onChange={(selectedOption) => handleChange(item.entity, selectedOption)}
+                  options={item.options.map(option => ({ value: option, label: option }))}
                 />
+
+                ) : (
+                  <Form.Control
+                    type="text"
+                    value={formData[item.entity] || ''}
+                    onChange={(e) => handleTextChange(item.entity, e.target.value)}
+                  />
                 )}
               </Form.Group>
             ))}
