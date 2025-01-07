@@ -88,17 +88,21 @@ const App = () => {
         }
       ];
 
-      if (result.message.includes("Account number validated successfully")) {
+      if (result.message.toLowerCase().includes("validated successfully")) {
         setShowButtonContainer(true);
+        setShowTextarea(true);
       } else {
         setShowButtonContainer(false);
+        setShowTextarea(false);
       }
 
       
-      if (result.message.includes("created successfully")) {
+      if (result.message.toLowerCase().includes("created successfully")) {
         setShowTaskButtonContainer(true);
+        setShowTextarea(true);
       } else {
         setShowTaskButtonContainer(false);
+        setShowTextarea(false);
       }
       setChatHistory(prevChatHistory => [
         ...prevChatHistory,
@@ -106,7 +110,7 @@ const App = () => {
       ]);
 
       // Show or hide the textarea based on the bot's response
-     if(result.query_message.length>0 || result.message.includes("Are these details correct?"))
+     if(result.query_message.length>0 || result.message.toLowerCase().includes("are these details correct?"))
       setShowTextarea(false);
     else
       setShowTextarea(true);
@@ -120,9 +124,9 @@ const App = () => {
   };
 
   const buttonTexts = [
-    { mainText: "Cancel Job", subText: "Need Acc#, Job# and Tech Id" },
-    { mainText: "Reassign Job", subText: "Need Acc#, Job#, Tech Id and New Tech Id" },
-    { mainText: "Schedule Job", subText: "Need Acc#, Job#, Tech Id, Reschudle Date#" }
+    { mainText: "Create New Job", subText: "Create a new job and assign it to a technician" },
+    { mainText: "Priority Job Reassign", subText: "Reassign a priority job to a new technician" },
+    { mainText: "Schedule Job", subText: "Schedule a job and assign it to a technician" }
   ];
 
   const handleButtonClick = (text) => {
@@ -211,10 +215,10 @@ const App = () => {
                   className='button'
                   onClick={() => handleButtonClick(button.mainText)}
                 >
-                  <div className='main-text font-bold text-left'>
+                  <div className='main-text font-bold text-left '>
                     {button.mainText}
                   </div>
-                  <div className='sub-text text-left'>{button.subText}</div>
+                  <div className='sub-text text-left text-gray-600'>{button.subText}</div>
                 </button>
               ))}
             </div>

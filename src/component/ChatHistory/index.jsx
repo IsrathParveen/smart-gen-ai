@@ -3,6 +3,9 @@ import ReactMarkdown from "react-markdown";
 import { FaRobot } from "react-icons/fa";
 import "./chatHistory.css"; // Import the CSS file for animations
 import Popup from '../../Popup'; // Import your Popup component
+import { TiThumbsUp } from "react-icons/ti";
+import { TiThumbsDown } from "react-icons/ti";
+
 const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping, onResponse,sendMessage }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
    const [query, setQuery] = useState([]);
@@ -60,19 +63,23 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping, onResponse,se
                   ) : (
                     <p><strong>{message.message.Message}</strong></p>
                   )}
-                  {message.message.QueryMessage.length===0 && message.message.Message.includes("Are these details correct?")?(
+                  {message.message.QueryMessage.length===0 && message.message.Message.toLowerCase().includes("are these details correct?")?(
                       <div>
                         <button
-                            className="ml-2 px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none"
+                            className="ml-2 px-2 py-1 border border-blue-500 bg-white text-blue-500 rounded hover:bg-blue-100 focus:outline-none  "
                             onClick={() => onResponse('Yes')}
-                          >
-                            Yes
+                          ><div className="flex items-center">
+                          <TiThumbsUp className="h-6 w-6 mr-1" />
+                          Yes
+                        </div>
                           </button>
                           <button
-                            className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none"
+                            className="ml-2 px-2 py-1 border border-gray-500 bg-white text-gray-500 rounded hover:bg-gray-100 focus:outline-none"
                             onClick={() => onResponse('No')}
-                          >
-                            No
+                          ><div className="flex items-center">
+                          <TiThumbsDown className="h-6 w-6 mr-1" />
+                          No
+                        </div>
                           </button>
                         </div>
                     ):(message.message.QueryMessage.length===0 && message.message.Message?(
