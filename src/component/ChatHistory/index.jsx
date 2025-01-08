@@ -56,10 +56,20 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping, onResponse,se
             <div key={index} className="custom-line-height">
               {message.type === "bot" && message.message.Message ? (
                 <div className="p-4 mb-4 mt-2" style={{ border: message.message.Message.includes('\n') ? '1px solid black' : 'none' }}>
-                   {message.message.Message.includes('\n') ? (
+                   {/* {message.message.Message.includes('\n') ? (
                     message.message.Message.split('\n').map((line, i) => (
                       <p key={i}><strong>{line}</strong></p>
-                    ))
+                    )) */}
+                  {message.message.Message.includes('\n') ? (
+                  message.message.Message.split('\n').map((line, i) => {
+                    const [key, ...value] = line.split(':');
+                    return (
+                      <p key={i}>
+                        <strong> <span>{key}:</span> </strong>
+                       {value.join(':')}
+                      </p>
+                    );
+                  })
                   ) : (
                     <p><strong>{message.message.Message}</strong></p>
                   )}

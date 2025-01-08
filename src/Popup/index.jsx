@@ -7,6 +7,7 @@ import Select from 'react-select';
 
 function Popup({ show, handleClose, query, onSubmit }) {
   const [formData, setFormData] = useState({});
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     // Initialize formData with query values
@@ -23,13 +24,31 @@ function Popup({ show, handleClose, query, onSubmit }) {
       [entity]: selectedOption.value
     }));
   };
+  // const handleTextChange = (entity, value) => {
+  //   setFormData(prevState => ({
+  //     ...prevState,
+  //     [entity]: value
+  //   }));
+  // };
   const handleTextChange = (entity, value) => {
+    if (entity === 'Phone') {
+      // Restrict input to 10 digits
+      if (value.length > 10) {
+        return;
+      }    
+    }
+    if (entity === 'Account_number') {
+      // Restrict input to 10 digits
+      if (value.length > 16) {
+        return;
+      }    
+    }
+  
     setFormData(prevState => ({
       ...prevState,
       [entity]: value
     }));
   };
-
 
   const handleSubmit = () => {
     // Format formData into a single string

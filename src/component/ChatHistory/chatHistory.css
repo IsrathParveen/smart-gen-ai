@@ -3,7 +3,8 @@
     align-items: center;
   }
   .custom-line-height {
-    line-height: 1.2; /* Adjust the value as needed */
+    padding-top: 0.2rem;
+    line-height: 1.0; /* Adjust the value as needed */
   }
   .dot {
     height: 8px;

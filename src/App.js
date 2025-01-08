@@ -32,13 +32,13 @@ const App = () => {
     const initialMessage = {
       type: "bot",
       message: "Hello! How can I help you today? Choose from a topic below or type a specific question.",
-      timestamp: new Date().toLocaleString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true
-      })
+      // timestamp: new Date().toLocaleString('en-US', {
+      //   month: 'long',
+      //   day: 'numeric',
+      //   hour: 'numeric',
+      //   minute: 'numeric',
+      //   hour12: true
+      // })
     };
     setChatHistory([initialMessage]);
     setInitialMessageDisplayed(true);
