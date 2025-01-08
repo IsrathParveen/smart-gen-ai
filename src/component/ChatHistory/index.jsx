@@ -85,7 +85,7 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping, onResponse,se
                     ):(message.message.QueryMessage.length===0 && message.message.Message?(
                       <ReactMarkdown>{message.message.message}</ReactMarkdown>
                     ):( <button
-                      className="mt-2 px-4 py-2 w-full bg-white text-blue-500 rounded hover:bg-gray-600 focus:outline-none border border-blue-500"
+                      className="mt-2 px-4 py-2 w-full bg-white text-blue-500 rounded hover:bg-gray-600 focus:outline-none border border-blue-500 inline-block"
                       onClick={() => handleButtonClick(message.message.Query)}
                     >
                       {message.message.QueryMessage}

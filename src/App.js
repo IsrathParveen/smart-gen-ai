@@ -19,12 +19,30 @@ const App = () => {
   const [showTextarea, setShowTextarea] = useState(true);
   const [showButtonContainer, setShowButtonContainer] = useState(false);
   const [showTaskButtonContainer, setShowTaskButtonContainer] = useState(false);
+  const [counter, setCounter] = useState(0);
+  const [initialMessageDisplayed, setInitialMessageDisplayed] = useState(false);
 
   const buttonContainerTexts = [
     { mainText: 'Great,Thanks!' },
     { mainText: 'Okay' },
     { mainText: 'Ok,Thank You!' },
   ];
+  useEffect(() => {
+    // Add initial chatbot message
+    const initialMessage = {
+      type: "bot",
+      message: "Hello! How can I help you today? Choose from a topic below or type a specific question.",
+      timestamp: new Date().toLocaleString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+      })
+    };
+    setChatHistory([initialMessage]);
+    setInitialMessageDisplayed(true);
+  }, []);
 
   const genAI = new GoogleGenerativeAI(
     "AIzaSyAJ_YKXP2LaKVDGssE4uX3HLPI0wDu28vk"
@@ -64,17 +82,34 @@ const App = () => {
 
     setUserInput("");
     setIsBotTyping(true);
+    const body = {
+      query: formData ? formData : userInput,
+    };
+
+    if (counter === 1) {
+      body.counter = 1;
+    }
+
+    
     try {
+      // const response = await fetch("http://10.81.78.212:8001/v1/user/search", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({ query: formData ? formData : userInput }),
+      // });
       const response = await fetch("http://10.81.78.212:8001/v1/user/search", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query: formData ? formData : userInput }),
+        body: JSON.stringify(body),
       });
 
       const result = await response.json();
       console.log(result);
+      setCounter(0);
 
       const botMessages = [
         {
@@ -125,8 +160,9 @@ const App = () => {
 
   const buttonTexts = [
     { mainText: "Create New Job", subText: "Create a new job and assign it to a technician" },
+    { mainText: "Priority Job Create", subText: "Create a priority job and assign it to a technician" },
     { mainText: "Priority Job Reassign", subText: "Reassign a priority job to a new technician" },
-    { mainText: "Schedule Job", subText: "Schedule a job and assign it to a technician" }
+    
   ];
 
   const handleButtonClick = (text) => {
@@ -135,6 +171,8 @@ const App = () => {
 
   const clearChat = () => {
     setChatHistory([]);
+    setCounter(1);
+    setShowTaskButtonContainer(true)
   };
 
   const handleKeyDown = (e) => {
@@ -163,6 +201,7 @@ const App = () => {
     setShowTaskButtonContainer(true);
     setShowButtonContainer(false);
     setIsModalVisible(false);
+    setCounter(prevCounter => (prevCounter === 0 ? 1 : 0));
   };
 
   const handleButtonContainer = (mainText) => {
@@ -173,7 +212,7 @@ const App = () => {
   return (
     <>
       <div id='top-id' className='flex flex-col h-screen'>
-        <header className='w-full bg-[rgb(33,150,243)] text-white py-4 flex justify-between items-center px-4'>
+        <header className='w-full bg-[rgb(33,150,243)] text-white py-4 flex justify-between items-center px-4' style={{height:'3.5rem'}}>
           <div>
             <span>SMART GenAI</span>
           </div>
@@ -189,7 +228,7 @@ const App = () => {
               onResponse={sendMessage}
             />
           </div>
-          <Common show={isModalVisible} handleClose={handleCloseModal} onNewQuestionClick={handleNewQuestionClick} />
+          <Common show={isModalVisible} handleClose={handleCloseModal} onNewQuestionClick={handleNewQuestionClick} setCounter={setCounter}/>
         </div>
         <div className='mt-4 m-5 p-3'>
           {showButtonContainer && (
@@ -207,7 +246,7 @@ const App = () => {
               ))}
             </div>
           )}
-            {(showTaskButtonContainer || chatHistory.length === 0) && (
+            {(showTaskButtonContainer  || (chatHistory.length === 1 && initialMessageDisplayed)) && (
             <div className='button-container'>
               {buttonTexts.map((button, index) => (
                 <button
@@ -272,8 +311,8 @@ const App = () => {
             )}
           </div>
         </div>
-        <footer className='w-full text-center bg-[rgb(33,150,243)] text-white flex justify-center items-center'>
-          <p>
+        <footer className='w-full text-center bg-[rgb(33,150,243)] text-white flex justify-center items-center  custom-footer'>
+          <p style={{paddingTop:'1rem'}}>
             Gen AI |{' '}
             <a
               href='mailto:contact@example.com'

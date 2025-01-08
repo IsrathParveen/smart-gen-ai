@@ -12,6 +12,12 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
+.custom-footer {
+  /* padding: 0.5rem 1rem;  */
+  /* Adjust padding as needed */
+  height: 1.5rem;
+  font-size: small; /* Ensure height is adjusted based on content */
+}
 
 .App-header {
   background-color: #282c34;
