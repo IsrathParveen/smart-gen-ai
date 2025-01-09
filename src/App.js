@@ -89,6 +89,9 @@ const App = () => {
     if (counter === 1) {
       body.counter = 1;
     }
+    else{
+      body.counter=0;
+    }
 
     
     try {

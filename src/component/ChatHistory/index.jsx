@@ -55,7 +55,7 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping, onResponse,se
             {/* Render the message using ReactMarkdown to handle any markdown */}
             <div key={index} className="custom-line-height">
               {message.type === "bot" && message.message.Message ? (
-                <div className="p-4 mb-4 mt-2" style={{ border: message.message.Message.includes('\n') ? '1px solid black' : 'none' }}>
+                <div className="p-2 mb-1 mt-1" style={{ border: message.message.Message.includes('\n') ? '1px solid black' : 'none' }}>
                    {/* {message.message.Message.includes('\n') ? (
                     message.message.Message.split('\n').map((line, i) => (
                       <p key={i}><strong>{line}</strong></p>
@@ -71,7 +71,7 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping, onResponse,se
                     );
                   })
                   ) : (
-                    <p><strong>{message.message.Message}</strong></p>
+                    <p>{message.message.Message}</p>
                   )}
                   {message.message.QueryMessage.length===0 && message.message.Message.toLowerCase().includes("are these details correct?")?(
                       <div>
@@ -95,7 +95,7 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping, onResponse,se
                     ):(message.message.QueryMessage.length===0 && message.message.Message?(
                       <ReactMarkdown>{message.message.message}</ReactMarkdown>
                     ):( <button
-                      className="mt-2 px-4 py-2 w-full bg-white text-blue-500 rounded hover:bg-gray-600 focus:outline-none border border-blue-500 inline-block"
+                      className="mt-1 px-4 py-2 w-full bg-white text-blue-500 rounded hover:bg-gray-600 focus:outline-none border border-blue-500 inline-block"
                       onClick={() => handleButtonClick(message.message.Query)}
                     >
                       {message.message.QueryMessage}
@@ -106,7 +106,7 @@ const ChatHistory = ({ chatHistory, onHyperlinkClick, isBotTyping, onResponse,se
                 <ReactMarkdown>{message.message}</ReactMarkdown>
               )}
             </div>
-            <div className="text-xs text-gray-500 mt-1">{message.timestamp}</div> {/* Display timestamp below the message */}
+            <div className="text-xs text-gray-500 mt-2">{message.timestamp}</div> {/* Display timestamp below the message */}
           </div>
         </div>
       ))}
